@@ -1,0 +1,10 @@
+
+CC=gcc # -Wall
+
+
+all: lbfgsb.o ancestry-gll.c lbfgsb.h lbfgsb.c
+	$(CC) lbfgsb.o -lm -o ANCESTRY ancestry-gll.c 
+
+
+clean:
+	rm -f lbfgsb.o ANCESTRY
