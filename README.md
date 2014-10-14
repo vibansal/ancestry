@@ -10,7 +10,9 @@ The method is described in the paper: "Fast individual ancestry inference from D
 1. sorted BAM file for sequence data or simple genotype file (rsid genotype pairs)
 2. population allele frequencies for common SNPs (generated using HapMap3 genotypes or other genotype datasets) 
 
-## OUTPUT:  admixture coefficients for each reference population 
+## OUTPUT:  
+
+admixture coefficients for each reference population 
 
 
 
