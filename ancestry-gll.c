@@ -2,12 +2,7 @@
 CODE for estimating ancestry of an individual sample (genotype likelihoods) using allele frequency for multiple populations 
 author: Vikas Bansal, vbansal@scripps.edu
 first implemented 12/01/12 
-last modified 12/09/13 
-YRI:0.6444 TSI:0.0332 MKK:0.0361 LWK:0.1877 CEU:0.0986 FINAL_NZ_PROPS
-YRI:0.6112 TSI:0.0687 MKK:0.0331 LWK:0.2094 CEU:0.0777 FINAL_NZ_PROPS
-
-LC: YRI:0.6490 TSI:0.0391 MKK:0.0330 LWK:0.1881 CEU:0.0908 FINAL_NZ_PROPS
-EX: YRI:0.6065 TSI:0.0692 MKK:0.0354 LWK:0.2089 CEU:0.0800 FINAL_NZ_PROPS
+last modified 12/09/13
 ##chrom position rsid A1 A2 YRI CHB CHD TSI MKK MEX LWK CEU ASW JPT GIH
 
 */
