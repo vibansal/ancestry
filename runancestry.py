@@ -116,7 +116,10 @@ def make_ancestry_inputfile_plink(pedfile,mapfile,afmatrixfile,outfile,executabl
 	try: File = open(mapfile,'r'); 
 	except IOError: print >>sys.stderr, "map file",mapfile,"not found"; return -1;
 	SNPlist = [];
-	for line in File:  snp = line.strip().split();  SNPlist.append([snp[1],snp[0],snp[2]]);  
+	for line in File:  
+		snp = line.strip().split();  
+		if snp[0][0] == '#': continue; ## BUG if first line has '# chrom', make sure the lines match up to ped file... 10/04/2014 
+		SNPlist.append([snp[1],snp[0],snp[2]]);  
 	File.close();
 	####### 
 
@@ -136,7 +139,7 @@ def make_ancestry_inputfile_plink(pedfile,mapfile,afmatrixfile,outfile,executabl
 		for i in xrange(5,len(headerline)): print >>File1, headerline[i],
 		print >>File1, '\n',
 
-		overlapping_markers =0;
+		overlapping_markers =0; missing_markers = 0;
 		for i in xrange(6,len(genotypes),2):
 			s = i-6; s /=2; 
 			try: 
@@ -149,15 +152,21 @@ def make_ancestry_inputfile_plink(pedfile,mapfile,afmatrixfile,outfile,executabl
 				elif genotypes[i] == RC[snp[3]] and genotypes[i+1] == RC[snp[4]]: print >>File1, gll_low,gll_high,gll_low,
 				elif genotypes[i] == RC[snp[4]] and genotypes[i+1] == RC[snp[4]]: print >>File1, gll_low,gll_low,gll_high,
 				elif genotypes[i] == RC[snp[3]] and genotypes[i+1] == RC[snp[3]]: print >>File1, gll_high,gll_low,gll_low,
-				else: flag = 1;
+				else: 
+					flag = 1; missing_markers +=1;
+					#print i,'missing',snp,SNPlist[s],genotypes[i],genotypes[i+1]
 				if flag ==0: 
-					for i in xrange(5,len(snp)): print >>File1, snp[i],
+					for j in xrange(5,len(snp)): print >>File1, snp[j],
 					print >>File1, '\n',
 					overlapping_markers +=1;
-			except KeyError: pass; 
+			except KeyError: 
+				#print >>sys.stderr, 'variant not found',SNPlist[s][0];
+				pass; 
 			
 		File1.close();
 		print >>sys.stderr, "\n\nancestry admixture calculations for individual:",samples+1,sampleid,'using',overlapping_markers,'markers';
+		#print >>sys.stderr, "missing",missing_markers,len(genotypes)/2;
+
 		if WINDOW ==0: call(["" + executable_dir_path + "/ANCESTRY -p 2 --pr " + `PARSIMONY` + " --HWE " + `HWE_CHECK` + " -i " + outfilename +  " > " + outfilename + ".ancestry"],shell=True);
 		else: 
 			print >>sys.stderr, "calling BFGS method in windows";
@@ -166,6 +175,8 @@ def make_ancestry_inputfile_plink(pedfile,mapfile,afmatrixfile,outfile,executabl
 		#call(["rm -f " + outfilename +  " " + outfilename + ".ancestry"],shell=True);
 		samples +=1;
 		#sys.exit();
+		"""
+		"""
 	File.close();
 
 ####################################################################################################################################################

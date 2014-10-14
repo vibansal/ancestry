@@ -36,7 +36,7 @@ int ADD_NOISE = 200;
 int HWE_CHECK =0;
 //double pvalues[3] = {0.01,0.001,0.0001}; double chivals[3] = {6.635,10.8275,15.1367};
 
-#define MIN_AF 1e-6
+#define MIN_AF 1e-3
 
 #include "pooledlikelihoods.c" // separate likelihood functions for pooled genotypes
 
@@ -99,6 +99,7 @@ void ancestryCLL_expected(double x[],double* CLL_mean,double* CLL_variance,int i
 			//WAFSUM *= WAFSUM; WAFSUM_c *= WAFSUM_c;
 			//sum = WAFSUM*WAFSUM + 4*WAFSUM*WAFSUM_c + WAFSUM_c*WAFSUM_c;
 			mean = 2*WAFSUM*WAFSUM*log(WAFSUM) + 2*WAFSUM*WAFSUM_c*log(2*WAFSUM*WAFSUM_c) + 2*WAFSUM_c*WAFSUM_c*log(WAFSUM_c);
+
 			var = WAFSUM*WAFSUM*(2*log(WAFSUM)-mean)*(2*log(WAFSUM)-mean);
 			var += 2*WAFSUM*WAFSUM_c*(log(2*WAFSUM*WAFSUM_c)-mean)*(log(2*WAFSUM*WAFSUM_c)-mean);
 			var += WAFSUM_c*WAFSUM_c*(2*log(WAFSUM_c)-mean)*(2*log(WAFSUM_c)-mean);
@@ -107,7 +108,7 @@ void ancestryCLL_expected(double x[],double* CLL_mean,double* CLL_variance,int i
 		}
 	}
 
-	int bins = 500; double** counts = calloc(sizeof(double*),bins); for (i=0;i<bins;i++) counts[i] = calloc(sizeof(double),4); 
+	int bins = 200; double** counts = calloc(sizeof(double*),bins); for (i=0;i<bins;i++) counts[i] = calloc(sizeof(double),6); 
 	for (i=0;i<bins;i++) 
 	{
 		for (j=0;j<4;j++) counts[i][j] = 0.0;
@@ -117,9 +118,19 @@ void ancestryCLL_expected(double x[],double* CLL_mean,double* CLL_variance,int i
 	for (i=0;i<SNPS && iters ==0;i++) 
 	{
 		WAFSUM =0; for (j=0;j<POPS;j++) WAFSUM += x[j]*AFMATRIX[i][j]; WAFSUM_c = 1.0-WAFSUM; 
+		if (WAFSUM > 0.5) // collapse 0.3 and 0.7 into same bin
+		{
+			WAFSUM = 1.0-WAFSUM; 
+			// swap genotype likelihoods as well
+			ll = GENOTYPES[i][0]; GENOTYPES[i][0] = GENOTYPES[i][2]; GENOTYPES[i][2] = ll; 
+		}
+
 		counts[(int)(WAFSUM*bins)][0] +=1; 
 		counts[(int)(WAFSUM*bins)][1] += 0.5*GENOTYPES[i][1] + GENOTYPES[i][0]; 
 		counts[(int)(WAFSUM*bins)][2] += (0.5*GENOTYPES[i][1] + GENOTYPES[i][0])*(0.5*GENOTYPES[i][1] + GENOTYPES[i][0]);
+		if (GENOTYPES[i][0] > 0.99) counts[(int)(WAFSUM*bins)][3] +=1;
+		else  if (GENOTYPES[i][1] > 0.99) counts[(int)(WAFSUM*bins)][4] +=1;
+		else if (GENOTYPES[i][2] > 0.99) counts[(int)(WAFSUM*bins)][5] +=1;
 
 		//WAFSUM *= WAFSUM; WAFSUM_c *= WAFSUM_c;
 		//sum = WAFSUM*WAFSUM + 4*WAFSUM*WAFSUM_c + WAFSUM_c*WAFSUM_c;
@@ -137,13 +148,18 @@ void ancestryCLL_expected(double x[],double* CLL_mean,double* CLL_variance,int i
 	// two PDFs (true and estimated..) for allele frequency bin counts...  discretized...
 	// variance of Y (genotype) conditional on predictors (allele frequency linear combination) = residual... 
 
-	double ssq =0,mean_af =0,var_af=0,af_bin;
+	double ssq =0,mean_af =0,var_af=0,af_bin,chi_sq =0;
+
 	for (i=0;i<bins;i++)
 	{
-		if (counts[i][0] < 1) continue;
+		if (counts[i][0] < 100) continue;
+		af_bin = (double)i/bins; 
 		mean_af = counts[i][1]/(counts[i][0]); var_af = counts[i][2]/(counts[i][0]) - mean_af*mean_af;
-		af_bin = (double)i/bins; ssq += counts[i][0]*(mean_af-af_bin)*(mean_af-af_bin);
+		ssq += counts[i][0]*(mean_af-af_bin)*(mean_af-af_bin); 
+		chi_sq = 0;
+
 		//fprintf(stderr,"bin %d %d %f %f %f ssq %f var_bin %f\n",i,(int)counts[i][0],counts[i][1],mean_af,af_bin,ssq,var_af);
+                //fprintf(stderr,"bin %d freq %0.4f obs_freq %0.4f size %d counts: %d,%d,%d expected: %0.2f,%0.2f,%0.2f \n",i,af_bin,mean_af,(int)counts[i][0],(int)counts[i][3],(int)counts[i][4],(int)counts[i][5],counts[i][0]*af_bin*af_bin,counts[i][0]*2*af_bin*(1.0-af_bin),counts[i][0]*(1.0-af_bin)*(1.0-af_bin));
 	}
 	fprintf(stderr,"bins %d ssq %f\n",bins,ssq);
 
@@ -445,7 +461,7 @@ int main(int argc,char* argv[])
 	double *invec = calloc(POPS+1,sizeof(double)); 
 	double *fullvec = calloc(POPS+1,sizeof(double)); double *pop_deltas = calloc(POPS+1,sizeof(double));
 
-	double sum=0; double maxval_global=0; 
+	double sum=0; double maxval_global=0; double F =0;
 	int counter=0;
 	AFMATRIX=allelefreq; GENOTYPES=genotypes;
 	if (SIMULATE ==1) simulate_admixed(invec,simparfile); // simulate admixed individual 
@@ -536,10 +552,12 @@ int main(int argc,char* argv[])
 	}
 	else
 	{
-		for (invec[POPS] = 0.0;invec[POPS] < 0.1; invec[POPS] += 0.0025) 
+		F = invec[POPS]; invec[POPS] = F-0.05; if (invec[POPS] < 0) invec[POPS] = 0; 
+		while (invec[POPS] < F + 0.05) 
 		{
 			maxval_global = ancestryCLL(invec); 
         		fprintf(stderr,"likelihood as function of F %f %f\n",invec[POPS],maxval_global);
+			invec[POPS] += 0.005;
 		}
 	}
 
