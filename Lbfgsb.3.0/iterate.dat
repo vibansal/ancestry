@@ -1,0 +1,49 @@
+RUNNING THE L-BFGS-B CODE
+
+it    = iteration number
+nf    = number of function evaluations
+nseg  = number of segments explored during the Cauchy search
+nact  = number of active bounds at the generalized Cauchy point
+sub   = manner in which the subspace minimization terminated:
+        con = converged, bnd = a bound was reached
+itls  = number of iterations performed in the line search
+stepl = step length used
+tstep = norm of the displacement (total step)
+projg = norm of the projected gradient
+f     = function value
+
+           * * *
+
+Machine precision = 2.220E-16
+ N =  25    M =  5
+
+   it   nf  nseg  nact  sub  itls  stepl    tstep     projg        f
+    0    1     -     -   -     -     -        -     1.030E+02  3.460E+03
+    1    5    25    24  ---    3  1.2E-02  4.2E+00  6.507E+01  2.398E+03
+    2    6     1     0  con    0  1.0E+00  4.2E+00  3.640E+01  1.438E+02
+    3    7     1     0  con    0  1.0E+00  6.8E-01  2.290E+01  7.282E+01
+    4    8     1     0  con    0  1.0E+00  1.1E+00  6.954E+00  1.603E+01
+    5    9     1     0  con    0  1.0E+00  6.5E-01  9.055E+00  5.187E+00
+    6   10     1     0  bnd    0  1.0E+00  6.1E-01  1.967E+01  2.127E+00
+    7   11     1     0  bnd    0  1.0E+00  1.8E-01  2.128E+00  2.076E-01
+    8   12     1     0  bnd    0  1.0E+00  9.0E-02  8.325E-01  5.327E-02
+    9   13     1     0  bnd    0  1.0E+00  5.3E-02  4.279E-01  1.305E-02
+   10   14     1     1  bnd    0  1.0E+00  2.5E-02  2.008E-01  3.860E-03
+   11   15     1     2  bnd    0  1.0E+00  2.0E-02  1.377E-01  7.457E-04
+   12   16     1     0  bnd    0  1.0E+00  7.8E-03  1.213E-01  3.540E-04
+   13   17     1     2  con    0  1.0E+00  3.1E-03  2.978E-02  7.425E-05
+   14   18     1     0  con    0  1.0E+00  1.1E-03  1.727E-02  3.741E-05
+   15   19     1     0  con    0  1.0E+00  2.1E-03  2.868E-02  1.098E-05
+   16   21     1     0  con    1  4.6E-01  4.8E-04  8.081E-03  3.908E-06
+   17   22     1     0  con    0  1.0E+00  2.2E-04  3.476E-03  1.995E-06
+   18   23     1     0  con    0  1.0E+00  2.2E-04  2.253E-03  8.258E-07
+   19   24     1     0  con    0  1.0E+00  2.4E-04  1.458E-03  1.992E-07
+   20   25     1     0  con    0  1.0E+00  1.8E-04  1.482E-03  5.758E-08
+   21   26     1     0  con    0  1.0E+00  6.8E-05  5.443E-04  1.463E-08
+   22   27     1     0  con    0  1.0E+00  2.3E-05  2.252E-04  2.363E-09
+   23   28     1     0  con    0  1.0E+00  8.0E-06  1.721E-04  1.083E-09
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+
+ Total User time 0.000E+00 seconds.
+
