@@ -29,3 +29,4 @@ python runancestry.py gives all options for the program
 ## NOTES
 
 1. To run on bam files, you will need the binary to calculate genotype likelihoods that is part of the iAdmix package. The source code for this binary is not part of the iAdmix code yet. 
+2. It is not recommended to run the program directly from a VCF since VCFs typically don't have information about reference genotypes (0/0) and this may bias the ancestry inference. 
