@@ -26,6 +26,7 @@ CORES =1;
 WINDOW =0;
 PARSIMONY =1;
 HWE_CHECK = 0;
+OUTPUT_GLL_ONLY = 0;
 
 ##################################################################################################################################
 
@@ -72,18 +73,21 @@ def ancestry_pipeline_bam(matrixfile,bamfile,outfile,executable_dir_path):
 	#python ../runancestry.py hapmap3.allchroms.shared.matrix.hg19  > hapmap3.allchroms.shared.matrix.hg19.forhapcut
 
 	print >>sys.stderr, "calculating genotype likelihoods for bam file",bamfile,"poolsize is: ",POOLSIZE 
-	call([ executable_dir_path + "/calculateGLL -p " + `POOLSIZE` + " --bam " + bamfile + " --variants " + outfile +".forGLL" + " --mmq 30 > " + outfile + ".GLL" ],shell=True)
-	# ../../hapCUT/calculateGLL --bam DM00231.bwamem.MD.bam --variants hapmap3.allchroms.shared.matrix.hg19.forhapcut --mmq 30 > DM00231.bwamem.MD.GLL
+	if OUTPUT_GLL_ONLY ==1: 
+		call([ executable_dir_path + "/calculateGLL --allsites 1 -p " + `POOLSIZE` + " --bam " + bamfile + " --variants " + outfile +".forGLL" + " --mmq 30 > " + outfile + ".GLL" ],shell=True)
+	else: 
+		call([ executable_dir_path + "/calculateGLL -p " + `POOLSIZE` + " --bam " + bamfile + " --variants " + outfile +".forGLL" + " --mmq 30 > " + outfile + ".GLL" ],shell=True)
+		# ../../hapCUT/calculateGLL --bam DM00231.bwamem.MD.bam --variants hapmap3.allchroms.shared.matrix.hg19.forhapcut --mmq 30 > DM00231.bwamem.MD.GLL
 
-	print >>sys.stderr, "making input file for ancestry calculations"; 
-	make_ancestry_inputfile_simple(matrixfile,outfile + ".GLL",outfile + ".ancestry.input");
-	#python runancestry.py ancestry-data/hapmap3.allchroms.shared.matrix.hg19 ancestry-data/DM00231.bwamem.MD.GLL > ancestry-data/DM00231.bwamem.MD.input
-	print >>sys.stderr, "ancestry admixture calculations for",bamfile,"poolsize is ",POOLSIZE;
-	call(["time " + executable_dir_path + "/ANCESTRY -p " + `POOLSIZE` + " --pr 1 -i " + outfile + ".ancestry.input > " + outfile + '.ancestry.out'],shell=True);
-	#call(["rm -f " + bamfile + ".GLL"],shell=True);
-	#call(["rm -f " + bamfile + ".forGLL"],shell=True);
-	#call(["rm -f " + bamfile + ".ancestry.input"],shell=True);
-	#./ANCESTRY ancestry-data/DM00231.bwamem.MD.input
+		print >>sys.stderr, "making input file for ancestry calculations"; 
+		make_ancestry_inputfile_simple(matrixfile,outfile + ".GLL",outfile + ".ancestry.input");
+		#python runancestry.py ancestry-data/hapmap3.allchroms.shared.matrix.hg19 ancestry-data/DM00231.bwamem.MD.GLL > ancestry-data/DM00231.bwamem.MD.input
+		print >>sys.stderr, "ancestry admixture calculations for",bamfile,"poolsize is ",POOLSIZE;
+		call(["time " + executable_dir_path + "/ANCESTRY -p " + `POOLSIZE` + " --pr 1 -i " + outfile + ".ancestry.input > " + outfile + '.ancestry.out'],shell=True);
+		#call(["rm -f " + bamfile + ".GLL"],shell=True);
+		#call(["rm -f " + bamfile + ".forGLL"],shell=True);
+		#call(["rm -f " + bamfile + ".ancestry.input"],shell=True);
+		#./ANCESTRY ancestry-data/DM00231.bwamem.MD.input
 
 
 
@@ -276,7 +280,8 @@ parser.add_option("--path",dest="path",type="string",help="path to directory wit
 parser.add_option("-c","--cores",dest="CORES",type="int",help="number of cores for processing in parallel",default=1);
 parser.add_option("-m","--modcore",dest="MOD_CORE",type="int",help="0/1/2/3..../CORES-1",default=0);
 parser.add_option("-w","--windows",dest="WINDOW",type="int",help="0/1",default=0);
-(options,args) = parser.parse_args(); POOLSIZE = options.POOLSIZE;  CORES = options.CORES; HWE_CHECK = options.HWE;
+parser.add_option("-g","--gll",dest="GLL_ONLY",type="int",help="0/1",default=0); # only output genotypes likelihoods, no ancestry calculation...
+(options,args) = parser.parse_args(); POOLSIZE = options.POOLSIZE;  CORES = options.CORES; HWE_CHECK = options.HWE; OUTPUT_GLL_ONLY = options.GLL_ONLY;
 WINDOW = options.WINDOW;
 INCLUDE_STRAND_AMBIG = options.include_strand_ambiguous
 PARSIMONY = options.pr; 
