@@ -19,11 +19,9 @@ admixture coefficients for each reference population
 
 python runancestry.py gives all options for the program 
 
-1. rename Makefile.simple to Makefile 
-2. run 'make all' 
+1. run 'make all' 
 
-
-3. analyzing bam file for ancestry: python runancestry.py -f hapmap3.10clusters.admixture.AF.1-22only --bam sample.sorted.bam -o output.prefix -p 2 
+2. analyzing bam file for ancestry: python runancestry.py -f hapmap3.10clusters.admixture.AF.1-22only --bam sample.sorted.bam -o output.prefix -p 2 
 
 
 ## NOTES
