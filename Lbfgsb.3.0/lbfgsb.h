@@ -8,6 +8,8 @@
 #include <math.h>
 #include "f2c.h"
 
+extern double BFGS_DELTA;
+
 /* code from wikipedia to calculate machine precision in constant time */
 typedef union {
 	  long long i64;

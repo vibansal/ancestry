@@ -38,6 +38,36 @@ double machine_eps ()
                 //return (s.i64 < 0 ? value - s.d64 : s.d64 - value);
 }
 
+void numerical_derivative( double *x, double *deriv,int numpars,double func_value,double (*fun)( double x[]),double* lowbound,  double* upbound,int* nbd) 
+{
+	double delta = 1e-8; double f1, f2;
+	int i=0;
+	for (i=0;i<numpars;i++) // calculate derivative w.r.t i-th variable 
+	{
+		if (nbd[i] == 0 || (nbd[i] == 1 && x[i] > lowbound[i]+delta) || (nbd[i] ==2 && x[i] > lowbound[i]+delta && x[i] < upbound[i]-delta)) 
+		// no bounds on variable or bounds satisfied for delta
+		{
+			x[i] -= delta; f1 = (*fun)(x); x[i] += delta*2; f2 = (*fun)(x); x[i] -= delta; deriv[i] = (f2-f1)/(delta*2.0); 
+		}
+		else if (nbd[i] ==1 || (nbd[i] ==2 && x[i] < upbound[i]-delta))
+		{
+			x[i] += delta; f2 =  (*fun)(x); x[i] -= delta; deriv[i] = (f2-func_value)/delta; 
+		}
+		else if (nbd[i] ==2 && x[i] > lowbound[i]+delta) 
+		{
+			x[i] -= delta; f1 = (*fun)(x); x[i] += delta; deriv[i] = (func_value-f1)/delta; 
+		}
+		else // bounds on both sides are violated 
+		{
+			deriv[i] = 0; // for constrained variable...
+		}
+		fprintf(stdout,"calculating derivative for %d: %f bounds:%d [%f-%f] %f %f\n",i,x[i],nbd[i],lowbound[i],upbound[i],deriv[i],func_value);
+	}
+}
+
+
+
+
 
 double optim_LBFGS_BOUNDED(int numvariables, double *initvector, double (*function)( double x[]), void (*dfunction)( double x[], double deriv[]),double *lowerbounds, double *upperbounds,int *nbd, int iprint,int* negative_delta)
 {
@@ -61,36 +91,66 @@ double optim_LBFGS_BOUNDED(int numvariables, double *initvector, double (*functi
 
 	new_stringcopy(task, "START",5); for (i=5; i<60; i++) task[i]=' ';
 
-	if (dfunction == NULL) 
+	likelihood = (*function)(initvector); 
+	if (dfunction != NULL)  
+	{
+		(*dfunction)(initvector,gradient); 
+		//for (i=0;i<numvariables;i++) fprintf(stdout,"calculating derivative for %d: %f bounds:%d [%f-%f] %f %f\n",i,initvector[i],nbd[i],lowerbounds[i],upperbounds[i],gradient[i],likelihood);
+	}
+	else
 	{
 		fprintf(stderr,"current implementation of BFGS-B requires the derivative to be provided \n"); 
-		return -1;
+		numerical_derivative(initvector,gradient,numvariables,likelihood,function,lowerbounds,upperbounds,nbd);
 	}
-	
-	likelihood = (*function)(initvector); (*dfunction)(initvector,gradient); 
-	prevld = likelihood; 
+	prevld = likelihood+100; int iters=0; double sum =0; int reset=0;
 
 	while (1)
 	{
 		setulb_(&numvariables, &m, initvector, lowerbounds, upperbounds, nbd, &likelihood,gradient, &factr, &pgtol, wa, iwa, task, &iprint, csave, lsave,isave, dsave);
+
 		if ((task[0] == 'F' && task[1] == 'G') || extraiter > 0 )
 		{
+			sum = 0; for (i=0;i<numvariables;i++) sum += initvector[i]; reset=0;
+			if (sum < 0.000001)
+			{
+				fprintf(stdout,"refreshing estimates... sum = 0 \n");
+				for (i=0;i<numvariables;i++)  initvector[i] = drand48(); reset=1;
+			}
 			likelihood = (*function)(initvector);
-			(*dfunction)(initvector,gradient);
-			if (likelihood > prevld+0.1) 
+			if (dfunction != NULL) (*dfunction)(initvector,gradient); 
+			else numerical_derivative(initvector,gradient,numvariables,likelihood,function,lowerbounds,upperbounds,nbd);
+			//for (i=0;i<numvariables && i< 1;i++) fprintf(stdout,"derivative for %d: %f bounds:%d [%f-%f] %f %f\n",i,initvector[i],nbd[i],lowerbounds[i],upperbounds[i],gradient[i],likelihood);
+			if (likelihood > prevld+0.1 && iters >= 5 && reset ==0) 
 			{
 				fprintf(stdout,"delta is negative %f \t",prevld-likelihood); // require 5 more iterations to converge
 				(*negative_delta)++;
 				//if (negative_delta ==2) 
 			}
 			//else extraiter--;
-			if (iprint > 1) fprintf(stdout,"likelihood = %.8f iter %d\n",likelihood,iter); iter++; 
-			prevld = likelihood;
+			if (iprint > 1) 
+			{
+				for (i=0;i<numvariables;i++) fprintf(stdout,"%.3f ",initvector[i]);
+				fprintf(stdout,"likelihood = %.8f iter %d\n",likelihood,iter); 
+			}
+			iter++; 
+			if (prevld -likelihood <= 0.00001 && likelihood < prevld && reset ==0) 
+			{
+				fprintf(stdout,"prevld %f current %f delta %f \n",prevld,likelihood,prevld-likelihood);
+				break;
+			}
+			prevld = likelihood; iters++;
 			continue; 
 		}
 		else if (strncmp(task,"NEW_X",5)==0) continue;
+		else if (strncmp(task,"ABNORMAL_TERMINATION_IN_LNSRCH",8)==0) 
+		{
+			// restart the iteration
+			fprintf(stdout,"abnormal termination in line search, try again using different starting solution \n"); 
+			*negative_delta = 10; break;
+		}
 		else break; 
 	}
+	for (i=0;i<numvariables;i++) fprintf(stdout,"derivative for %d: %f bounds:%d [%f-%f] %f %f\n",i,initvector[i],nbd[i],lowerbounds[i],upperbounds[i],gradient[i],likelihood);
 
 	if (iprint >1) fprintf(stdout,"\n");
 	free(wa); free(iwa); free(gradient); 
@@ -1168,7 +1228,7 @@ L777:
 /* Computing MAX */
     d__1 = abs(fold), d__2 = abs(*f), d__1 = max(d__1,d__2);
     ddum = max(d__1,1.); // can change this to min instead of max for absolute convergence, Vikas Bansal 12/15/13 
-    if (fold - *f <= tol * ddum && (fold - *f <= 0.00001)) { // added extra condition for absolute delta 
+    if (fold - *f <= tol * ddum) { // added extra condition for absolute delta 
 /*                                        terminate the algorithm. */
 	new_stringcopy(task, "CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH",47);
 	if (iback >= 10) {

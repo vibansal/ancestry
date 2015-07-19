@@ -10,7 +10,7 @@ last modified 12/09/13
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "lbfgsb.h"
+#include "Lbfgsb.3.0/lbfgsb.h"
 
 //gcc Lbfgsb.3.0/lbfgsb.o -lm -o ANCESTRY ancestry.c
 // we can speed up convergence by relaxing the stopping criteron
