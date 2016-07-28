@@ -39,6 +39,7 @@ int getindex(HASHTABLE* ht,char* chrom)
 		if (strcmp(keypointer->key,chrom) ==0) return keypointer->value;
 		keypointer = keypointer->next;
 	}
+	fprintf(stderr,"did not find match for chrom: %s in hashtable \n",chrom);
         return -1;
 }
 

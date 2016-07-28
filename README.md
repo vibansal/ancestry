@@ -29,6 +29,6 @@ python runancestry.py gives all options for the program
  
 2. It is not recommended to run the program directly from a VCF since VCFs typically don't have information about reference genotypes (0/0) and this may bias the ancestry inference. 
 
-3. Make sure that the chromosome names and the reference genome version in the BAM file match the allele frequency file. 
+3. Make sure that the chromosome names ('chr1' vs '1') and the reference genome version (hg18 vs hg19) in the BAM file match the allele frequency file. 
 
 4. The '-c' and '-m' options are experimental and only for genotype data with multiple individuals 

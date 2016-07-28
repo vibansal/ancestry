@@ -140,6 +140,7 @@ int parse_bamfile_sorted(char* bamfile,HASHTABLE* ht,CHROMVARS* chromvars,VARIAN
 					{
 						if (strcmp(reflist->names[i],read->chrom) ==0) { reflist->current = i; break; }
 					}
+					if (reflist->current < 0) fprintf(stderr,"no match for chromosome name %s in reflist \n",read->chrom);
 				}
 			}
 		}

@@ -1,2 +1,2 @@
 
-07/28/2016  added parsebam directory with code for getting genotype likelihoods from BAM files 
+07/28/2016  added parsebam directory with code for getting genotype likelihoods from BAM files. This code is derived from the HapCUT parsebam code 

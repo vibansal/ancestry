@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# author Vikas Bansal vbansal@scripps.edu
+# author Vikas Bansal vibansal@ucsd.edu
 
 ## TODO 
 ## 1. print # of sites and average read-depth per site in calculateGLL code 
@@ -13,9 +13,6 @@
 ## 10. read plink .bed files binary format for genotypes
 ## 11. option to do ancestry for only specific samples in ped file
 
-## running code using plink files
-## python ~/CODE/JOINTCODE-coral/ancestry/runancestry.py --plink simpar.AFR --freq ../HapMap-AF/hapmap3.255393.AFmatrix.b36 --out sim_AFR --path ~/CODE/JOINTCODE-coral/ancestry/
-
 import sys, os, glob, string,math, time
 from math import log
 from optparse import OptionParser
@@ -27,6 +24,7 @@ WINDOW =0;
 PARSIMONY =1;
 HWE_CHECK = 0;
 OUTPUT_GLL_ONLY = 0;
+ADD_chr_names = 0;
 
 ##################################################################################################################################
 
@@ -36,7 +34,8 @@ def output_GLL_inputfile(afmatrixfile,outfile):
 	for line in File: 
 		if line[0] != '#':
 			snp = line.strip().split(); 
-			print >>File1, 'SNP',snp[0].strip('chr'),snp[1],snp[3],snp[4],snp[3] + '/' + snp[4],100; 
+			if ADD_chr_names ==0: print >>File1, 'SNP',snp[0].strip('chr'),snp[1],snp[3],snp[4],snp[3] + '/' + snp[4],100; 
+			elif 'chr' in snp[0]: print >>File1, 'SNP',snp[0],snp[1],snp[3],snp[4],snp[3] + '/' + snp[4],100; 
 	File.close();
 	File1.close();
 
@@ -63,21 +62,17 @@ def make_ancestry_inputfile_simple(afmatrixfile,GLLfile,outfile):
 	File.close();
 	File1.close();
 
-## function that processed bam file for ancestry calculation
+## function that processes bam file for ancestry calculation
 def ancestry_pipeline_bam(matrixfile,bamfile,outfile,executable_dir_path):
-
-	## the python I/O can be removed in C 
 
 	print >>sys.stderr, "making input file for getting genotype likelihoods"; 
 	output_GLL_inputfile(matrixfile,outfile+'.forGLL');
-	#python ../runancestry.py hapmap3.allchroms.shared.matrix.hg19  > hapmap3.allchroms.shared.matrix.hg19.forhapcut
 
 	print >>sys.stderr, "calculating genotype likelihoods for bam file",bamfile,"poolsize is: ",POOLSIZE 
 	if OUTPUT_GLL_ONLY ==1: 
 		call([ executable_dir_path + "/calculateGLL --allsites 1 -p " + `POOLSIZE` + " --bam " + bamfile + " --variants " + outfile +".forGLL" + " --mmq 30 > " + outfile + ".GLL" ],shell=True)
 	else: 
 		call([ executable_dir_path + "/calculateGLL -p " + `POOLSIZE` + " --bam " + bamfile + " --variants " + outfile +".forGLL" + " --mmq 30 > " + outfile + ".GLL" ],shell=True)
-		# ../../hapCUT/calculateGLL --bam DM00231.bwamem.MD.bam --variants hapmap3.allchroms.shared.matrix.hg19.forhapcut --mmq 30 > DM00231.bwamem.MD.GLL
 
 		print >>sys.stderr, "making input file for ancestry calculations"; 
 		make_ancestry_inputfile_simple(matrixfile,outfile + ".GLL",outfile + ".ancestry.input");
@@ -87,7 +82,6 @@ def ancestry_pipeline_bam(matrixfile,bamfile,outfile,executable_dir_path):
 		#call(["rm -f " + bamfile + ".GLL"],shell=True);
 		#call(["rm -f " + bamfile + ".forGLL"],shell=True);
 		#call(["rm -f " + bamfile + ".ancestry.input"],shell=True);
-		#./ANCESTRY ancestry-data/DM00231.bwamem.MD.input
 
 
 
