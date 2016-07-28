@@ -179,6 +179,7 @@ double ancestryCLL(double x[])
 			if (sum < 0) fprintf(stderr,"error sum is negative %f i %d F %f genotypes %f,%f,%f\n",sum,i,x[POPS],GENOTYPES[i][0],GENOTYPES[i][1],GENOTYPES[i][2]);
 		}
 		LL += log(sum);
+		//fprintf(stderr,"error sum is negative %f i %d genotypes %f,%f,%f %f\n",sum,i,GENOTYPES[i][0],GENOTYPES[i][1],GENOTYPES[i][2],LL);
 	}
 	//LL -= 2.0*SNPS*log(AFSUM);
 	// we could add additional penalty function that penalizes small ancestry coefficients.... 
@@ -282,6 +283,7 @@ void read_allelefreqs(char* afile,double** allelefreq,double** genotypes,char** 
 		}
 		for (j=0;j<POPS-1;j++) fscanf(fp,"%lf ",&allelefreq[i][j]);
 		fscanf(fp,"%lf\n",&allelefreq[i][POPS-1]);
+		//fprintf(stderr,"snp %d %f %f %f \n",i,genotypes[i][0],genotypes[i][1],genotypes[i][2]);
 	}
 	//if (ADD_NOISE > 0) add_noise(allelefreq,SNPS,POPS,ADD_NOISE);
 	fix_zero_frequencies(allelefreq,SNPS,POPS);
@@ -475,6 +477,13 @@ int main(int argc,char* argv[])
 	int negdelta =100; int it =0; double maxval_global_prev = 0;  int h=0;
 	// rerun the method with new starting points if # of negative delta steps is 2 or more 
 	// if value of likelihood in rerun is same as first iter, don't continue -> only maximum of two times typically...
+
+	/*
+	for (i=0;i<POPS;i++) invec[i] = 1.0/POPS;  sum=0; for (i=0;i<POPS;i++) sum += invec[i]; for (i=0;i<POPS;i++) invec[i] /=sum;  
+	maxval_global = ancestryCLL(invec);
+	for (i=0;i<POPS;i++) fprintf(stdout,"%s:%0.3f ",poplabels[i],invec[i]); fprintf(stdout," initial sol %f\n",maxval_global);
+	return 1;
+	*/
 
 	for (h=0;h<=HWE_CHECK;h++)
 	{
