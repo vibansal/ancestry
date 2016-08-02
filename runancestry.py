@@ -24,7 +24,7 @@ WINDOW =0;
 PARSIMONY =1;
 HWE_CHECK = 0;
 OUTPUT_GLL_ONLY = 0;
-ADD_chr_names = 0;
+ADD_chr_names = False;
 
 ##################################################################################################################################
 
@@ -34,7 +34,7 @@ def output_GLL_inputfile(afmatrixfile,outfile):
 	for line in File: 
 		if line[0] != '#':
 			snp = line.strip().split(); 
-			if ADD_chr_names ==0: print >>File1, 'SNP',snp[0].strip('chr'),snp[1],snp[3],snp[4],snp[3] + '/' + snp[4],100; 
+			if not ADD_chr_names : print >>File1, 'SNP',snp[0].strip('chr'),snp[1],snp[3],snp[4],snp[3] + '/' + snp[4],100; 
 			elif 'chr' in snp[0]: print >>File1, 'SNP',snp[0],snp[1],snp[3],snp[4],snp[3] + '/' + snp[4],100; 
 	File.close();
 	File1.close();
@@ -275,8 +275,10 @@ parser.add_option("-c","--cores",dest="CORES",type="int",help="number of cores f
 parser.add_option("-m","--modcore",dest="MOD_CORE",type="int",help="0/1/2/3..../CORES-1",default=0);
 parser.add_option("-w","--windows",dest="WINDOW",type="int",help="0/1",default=0);
 parser.add_option("-g","--gll",dest="GLL_ONLY",type="int",help="0/1",default=0); # only output genotypes likelihoods, no ancestry calculation...
+parser.add_option("--addchr", dest="ADD_chr_names", action="store_true", default = False);
 (options,args) = parser.parse_args(); POOLSIZE = options.POOLSIZE;  CORES = options.CORES; HWE_CHECK = options.HWE; OUTPUT_GLL_ONLY = options.GLL_ONLY;
 WINDOW = options.WINDOW;
+ADD_chr_names = options.ADD_chr_names;
 INCLUDE_STRAND_AMBIG = options.include_strand_ambiguous
 PARSIMONY = options.pr; 
 
