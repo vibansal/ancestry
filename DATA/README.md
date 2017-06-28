@@ -1,6 +1,6 @@
 
 
-##The format of the allele frequency file required as input for iAdmix is as follows: 
+#The format of the allele frequency file required as input for iAdmix is as follows: #
 
 
 The first line should start with '#' and has information about the population names/ids. Each subsequent line has information about the allele frequencies of the populations and the two alleles for each variant. Note that the allele frequency is the frequency of the 'A1' allele (column 4). It does not matter if it is the minor or major allele. 
