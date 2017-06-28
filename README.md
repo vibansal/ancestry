@@ -25,6 +25,8 @@ python runancestry.py gives all options for the program
 
 ## NOTES
 
+0. For running iAdmix, the path to the directory where the 'ANCESTRY' executable is located needs to be provided using the --path option to runancestry.py. This should be the directory where you downloaded the source code and compiled it. 
+
 1. To run on bam files, you will need to calculate genotype likelihoods using the reads that overlap the variant sites. iAdmix provides a program called 'calculateGLL' for doing this. The  binary file (compiled on ubuntu x86\_64 platform) is available in the github repository. The source code has recently been added to the github repository and can be compiled with the 'make all' command. 
  
 2. It is not recommended to run the program directly from a VCF since VCFs typically don't have information about reference genotypes (0/0) and this may bias the ancestry inference. 
