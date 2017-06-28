@@ -16,11 +16,19 @@ admixture coefficients for each reference population
 
 ## HOW TO RUN THE PROGRAM:
 
+To compile the code: run 'make all' in the directory with the source code. This should create the executables 'ANCESTRY' and 'calculateGLL' (in the sub-directory parsebam). 
+
 python runancestry.py gives all options for the program 
 
-1. run 'make all' 
 
-2. analyzing bam file for ancestry: python runancestry.py -f hapmap3.10clusters.admixture.AF.1-22only --bam sample.sorted.bam -o output.prefix -p 2 
+1.  analyzing bam file for ancestry: python runancestry.py -f populations.frequencies.txt --bam sample.sorted.bam -o sample.output --path path_directory_with_executable 
+
+2. Example for genotype file: python runancestry.py --freq populations.frequencies.txt --geno sample.genotypes --out sample.ancestry 
+
+3. Example for plink genotype file: python runancestry.py --freq populations.frequencies.txt --plink sample.genotypes --out sample.ancestry
+
+For plink, the program will assume that the files sample.genotypes.ped and sample.genotypes.map exist
+
 
 
 ## NOTES
