@@ -33,12 +33,14 @@ For plink, the program will assume that the files sample.genotypes.ped and sampl
 
 ## NOTES
 
-0. For running iAdmix, the path to the directory where the 'ANCESTRY' executable is located needs to be provided using the --path option to runancestry.py. This should be the directory where you downloaded the source code and compiled it. 
+1. # the allele frequency file should be sorted by chromosome and position #
 
-1. To run on bam files, you will need to calculate genotype likelihoods using the reads that overlap the variant sites. iAdmix provides a program called 'calculateGLL' for doing this. The  binary file (compiled on ubuntu x86\_64 platform) is available in the github repository. The source code has recently been added to the github repository and can be compiled with the 'make all' command. 
+2. For running iAdmix, the path to the directory where the 'ANCESTRY' executable is located needs to be provided using the --path option to runancestry.py. This should be the directory where you downloaded the source code and compiled it. 
+
+3. To run on bam files, you will need to calculate genotype likelihoods using the reads that overlap the variant sites. iAdmix provides a program called 'calculateGLL' for doing this. The  binary file (compiled on ubuntu x86\_64 platform) is available in the github repository. The source code has recently been added to the github repository and can be compiled with the 'make all' command. 
  
-2. It is not recommended to run the program directly from a VCF since VCFs typically don't have information about reference genotypes (0/0) and this may bias the ancestry inference. 
+4. It is not recommended to run the program directly from a VCF since VCFs typically don't have information about reference genotypes (0/0) and this may bias the ancestry inference. 
 
-3. Make sure that the chromosome names ('chr1' vs '1') and the reference genome version (hg18 vs hg19) in the BAM file match the allele frequency file. If your chromosome names have the 'chr' prefix, use the command line option "--addchr=True" for the runancestry.py script 
+5. Make sure that the chromosome names ('chr1' vs '1') and the reference genome version (hg18 vs hg19) in the BAM file match the allele frequency file. If your chromosome names have the 'chr' prefix, use the command line option "--addchr=True" for the runancestry.py script 
 
-4. The '-c' and '-m' options are experimental and only for genotype data with multiple individuals 
+6. The '-c' and '-m' options are experimental and only for genotype data with multiple individuals 
