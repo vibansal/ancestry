@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2.7
 # author Vikas Bansal vibansal@ucsd.edu
 
 ## TODO 
@@ -25,11 +25,13 @@ PARSIMONY =1;
 HWE_CHECK = 0;
 OUTPUT_GLL_ONLY = 0;
 ADD_chr_names = False;
+SORT_SNPS = 1; ## sort the 'forGLL' file before running calculateGLL code, added 07/07/2017
 
 ##################################################################################################################################
 
 def output_GLL_inputfile(afmatrixfile,outfile):
 	File1 = open(outfile,'w');
+	snp_list = []; 
 	File = open(afmatrixfile);
 	for line in File: 
 		if line[0] != '#':
@@ -38,6 +40,9 @@ def output_GLL_inputfile(afmatrixfile,outfile):
 			elif 'chr' in snp[0]: print >>File1, 'SNP',snp[0],snp[1],snp[3],snp[4],snp[3] + '/' + snp[4],100; 
 	File.close();
 	File1.close();
+	if SORT_SNPS ==1: 
+		call('sort -k 2,2 -k 3,3g ' + outfile + ' > ' + outfile + '.sorted',shell=True); 
+		call('mv ' + outfile + '.sorted ' + outfile,shell=True); 
 
 def make_ancestry_inputfile_simple(afmatrixfile,GLLfile,outfile):
 	File1 = open(outfile,'w');
