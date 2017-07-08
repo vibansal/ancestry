@@ -33,7 +33,7 @@ For plink, the program will assume that the files sample.genotypes.ped and sampl
 
 ## NOTES
 
-1. ### the allele frequency file should be sorted by chromosome and position #
+1. the allele frequency file should be sorted by chromosome and position
 
 2. For running iAdmix, the path to the directory where the 'ANCESTRY' executable is located needs to be provided using the --path option to runancestry.py. This should be the directory where you downloaded the source code and compiled it. 
 
