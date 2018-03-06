@@ -1,6 +1,13 @@
 
 
-## The format of the allele frequency file required as input for iAdmix is as follows:
+You can download hg19 and hg18 allele frequency data from these links: 
+
+https://bansal-lab.github.io/software/hapmap3.8populations.hg19.zip
+
+https://bansal-lab.github.io/software/hapmap3.8populations.hg18.zip
+
+
+### The format of the allele frequency file required as input for iAdmix is as follows:
 
 
 The first line should start with '#' and has information about the population names/ids. 
@@ -19,3 +26,4 @@ Each subsequent line has information about the allele frequencies of the populat
 
 
 A sample allele frequency file is included in this folder. 
+
