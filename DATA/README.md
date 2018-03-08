@@ -1,10 +1,6 @@
 
 
-You can download hg19 and hg18 allele frequency data from these links: 
-
-https://bansal-lab.github.io/software/hapmap3.8populations.hg19.zip
-
-https://bansal-lab.github.io/software/hapmap3.8populations.hg18.zip
+Allele frequency matrices needed for running iAdmix (hg19 and hg38 positions) from the HapMap3 populations are provided for download in this folder. Download the files and unzip them before running iAdmix. 
 
 
 ### The format of the allele frequency file required as input for iAdmix is as follows:
