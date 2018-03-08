@@ -4,6 +4,8 @@ Inference of ancestry is an important aspect of disease association studies as w
 
 The method is described in the paper: "Fast individual ancestry inference from DNA sequence data leveraging allele frequencies from multiple populations". Vikas Bansal and Ondrej Libiger. published in BMC Bioinformatics 2015. 
 
+https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-014-0418-7
+
 ## INPUT: 
 
 1. sorted BAM file for sequence data or simple genotype file (rsid genotype pairs)
