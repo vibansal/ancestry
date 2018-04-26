@@ -16,4 +16,4 @@ lbfgsb.o: Lbfgsb.3.0/lbfgsb.h Lbfgsb.3.0/lbfgsb.c
 clean:
 	rm -f lbfgsb.o ANCESTRY calculateGLL
 	$(MAKE) -C parsebam clean
-	#$(MAKE) -C parsebam/samtools-0.1.18 clean
+	$(MAKE) -C parsebam/samtools-0.1.18 clean
