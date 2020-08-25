@@ -33,6 +33,11 @@ int insert_keyvalue(HASHTABLE* ht, char* key,int slen,int value)
 
 int getindex(HASHTABLE* ht,char* chrom)
 {
+        if (strlen(chrom) > 3) {  //"chr\d+"
+	  fprintf(stderr, "rename chromosome from : %s to %s\n", chrom, &chrom[3]);
+	  chrom = &chrom[3];
+	}
+
         int hash = hashstring(chrom,ht->htsize); keypointer = ht->blist[hash];
 	while (keypointer != NULL)
 	{
