@@ -1,2 +1,4 @@
 
+03/07/2018 added allele frequency files for hg19 and hg38 to DATA directory
+
 07/28/2016  added parsebam directory with code for getting genotype likelihoods from BAM files. This code is derived from the HapCUT parsebam code 
