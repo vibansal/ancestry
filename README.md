@@ -15,6 +15,9 @@ https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-014-0418-7
 
 admixture coefficients for each reference population 
 
+## INSTALLATION
+
+The program is implemented in Python and C. To successfully compile the code and run the program, Python 2.7 and a gcc compiler is required. The code currently does not work with new version of Python (3.xx). 
 
 ## HOW TO RUN THE PROGRAM:
 
