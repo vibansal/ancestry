@@ -17,7 +17,7 @@ admixture coefficients for each reference population
 
 ## INSTALLATION
 
-The program is implemented in Python and C. To successfully compile the code and run the program, Python 2.7 and a gcc compiler is required. The code currently does not work with new version of Python (3.xx). 
+The program is implemented in Python and C. To successfully compile the code and run the program, Python 2.7 and a gcc compiler is required. The code currently does not work with new version of Python (3.xx). The code also uses an older version of samtools (0.1.18) for parsing bam files which is included in the parsebam directory. Therefore, the code can only handle bam files (not cram files).
 
 ## HOW TO RUN THE PROGRAM:
 
